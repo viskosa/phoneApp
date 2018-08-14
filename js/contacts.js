@@ -63,11 +63,14 @@ class ContactsPage {
 
   sortColumns() {
     let target = event.target;
-
+    console.log(target)
     this.tableCaptions.forEach(item => {
       if (target.textContent == item) {
+        console.log(true)
         item = this.makeCamelCase(item);
+        console.log(item)
         let sorted = this.sortUsers(item);
+        console.log(sorted)
         this.reRenderTable(sorted);
       }
     });
@@ -97,6 +100,7 @@ class ContactsPage {
   }
 
   sortUsers(str) {
+    console.log(str)//тут опять нужно делить фуллнейм - вынести дележ этот в отдельную ф-цию?
     function compare(a, b) {
       if (isNaN(a[str])) {
         if (a[str] > b[str]) {

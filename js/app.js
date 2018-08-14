@@ -31,6 +31,10 @@ class App {
 		this.pages.router.definePage(this.render.bind(this));
 		this.appDOMNode = document.getElementById("app"); // сюда будем делать рендер всех страниц
 		// и это не будет затрагивать футер и его события
+
+/*		window.addEventListener('popstate'. event => { // не работает
+			render(event.state);
+		})*/
 	}
 
 	render(href) {
@@ -38,24 +42,26 @@ class App {
 
 		if (activePage == 'contacts') {
 			let response = this.pages.api.requestUsers();//сюда вернулся промис
-
 			response
 				.then(data => {
 					this.state.people = data;
-					const forHistory = this.pages[activePage].render();
-					this.appDOMNode.innerHTML = forHistory;
-					this.pages[activePage].setHandlers();
+					this.completeRender(activePage);
 				})
-				.catch(error => console.log('error', error))
+				.catch(error => console.log('error', error));
 
 		} else {
-			//const activePage = this.state.activePage; 	// то же самое
-			const forHistory = this.pages[activePage].render(); 	
-			this.appDOMNode.innerHTML = forHistory;				// и отрендерь ту страничку,
-																// которая сейчас указана как activePage в this.state												
-			this.pages[activePage].setHandlers(); //и навесь обработчики событий
-			//window.history.pushState(forHistory, href, href) // ДОПИСАТЬ!!!
+
+			this.completeRender(activePage);
 		}
+	}
+
+	completeRender(activePage) {
+		const forHistory = this.pages[activePage].render(); 	
+		this.appDOMNode.innerHTML = forHistory;				// и отрендерь ту страничку,
+															// которая сейчас указана как activePage в this.state												
+		this.pages[activePage].setHandlers(); 				//и навесь обработчики событий
+
+		//window.history.pushState(forHistory, href, href) // ДОПИСАТЬ!!!
 
 	}
 
