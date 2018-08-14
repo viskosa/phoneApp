@@ -86,7 +86,7 @@ class App {
 			],*/
 			activePage: "contacts",
 		};
-		this.url = `http://easycode-js.herokuapp.com/pnv2/users`;
+		this.url = `https://easycode-js.herokuapp.com/pnv2/users`;
 		this.pages = {
 			contacts: new ContactsPage(this.state), // тут передали ссылку на this.state
 			adduser: new AddUser(this.state),
