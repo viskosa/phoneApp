@@ -1,8 +1,6 @@
 class User {
 	constructor(globalState) {
-		this.state = globalState; //стал равен this.state-у со страницы App.js
-		this.mobileNumber = "+38 (093) 989 89 89";
-		this.homeNumber = "+38 (067) 989 89 89";
+		this.state = globalState;
 	}
 
 	renderOptions(options) {
@@ -15,10 +13,17 @@ class User {
 	}
 
 	setHandlers() {
-
+		console.log(this);
 	}
 
 	render() {
+		let userName = this.state.selectedUser
+			? this.state.selectedUser.fullName
+			: "User Name";
+		let mobileNumber = this.state.selectedUser
+			? this.state.selectedUser.phone
+			: "";
+
 		return `<header class="header">
 				<div class="container top-radius">
 					<div class="user-top-line">
@@ -33,7 +38,7 @@ class User {
 			<main class="main">
 				<div class="container">
 					<img src="images/user-face.png" alt="#" class=" user-img img-circle center-block">
-					<div class="user-name">User Name</div>
+					<div class="user-name">${userName}</div>
 					<div class="options-line">
 						${this.renderOptions({ glyphicon: "comment", text: "message" })}
 						${this.renderOptions({ glyphicon: "earphone", text: "call" })}				
@@ -41,12 +46,12 @@ class User {
 						${this.renderOptions({ glyphicon: "envelope", text: "mail" })}
 					</div>
 					<div class="tel-number">
-						<h3>mobile</h3>
-						<div>${this.mobileNumber}</div>
+						<h3>mobile number</h3>
+						<div>${mobileNumber}</div>
 					</div>
 					<div class="tel-number">
-						<h3>home</h3>
-						<div>${this.homeNumber}</div>
+						<h3>home number</h3>
+						<div></div>
 					</div>
 					<div class="options-table">
 						<div class ="options-item"><a href="#">Notes</a></div>
@@ -60,3 +65,5 @@ class User {
 			</main>`;
 	}
 }
+
+export {User};

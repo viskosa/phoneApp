@@ -6,21 +6,21 @@
 //innerHTML по максимуму
 //https://aleksandra-maslennikova.github.io/telephone-book/keypad.html
 
-//Сделайте чтобы при нажатии на кнопку цифра отобразилась
+//Сделайте чтобы при нажатии на кнопку цифра отобразилась +
 //в <span class="numbers">
 
 //https://aleksandra-maslennikova.github.io/telephone-book/index.html
 //По клику по заголовку таблицы,
-//таблица сортировалась по соответствующему свойству
+//таблица сортировалась по соответствующему свойству  +
 
-//добавить функционал для удаления номера
-//1. keypad - сделать чтобы номер можно было набрать с клавиатуры (!)
-//2. Формат номера должен быть таким (099)-17-38-170
+//добавить функционал для удаления номера +
+//1. keypad - сделать чтобы номер можно было набрать с клавиатуры (!) +
+//2. Формат номера должен быть таким (099)-17-38-170  -
 
 class KeypadPage {
   constructor(globalState) {
     this.state = globalState; //стал равен this.state-у со страницы App.js
-    this.title = 'Keypad';
+    this.title = "Keypad";
   }
 
   buttonsHandler() {
@@ -31,8 +31,9 @@ class KeypadPage {
       "click",
       this.clickHandler.bind(this, placeToInsertNumbers)
     );
-    window.addEventListener(    //are ever remove such listener?
-                                // for example when-even you changing a page
+    window.addEventListener(
+      //are ever remove such listener?
+      // for example when-even you changing a page
       "keypress",
       this.keyHandler.bind(this, placeToInsertNumbers)
     );
@@ -106,3 +107,4 @@ class KeypadPage {
   }
 }
 
+export {KeypadPage};

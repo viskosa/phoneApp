@@ -1,19 +1,20 @@
-//index.html/contacts.html - в поле search при вводе буквы,
-//добавить поиск по имени если имя включает хотя бы одну эту букву.
-//после ввода каждого символа, фильтровать отображаемых пользователей.
-//При удалении всех символов отобразить снова весь список
+//index.html/contacts.html - в поле search при вводе буквы, +
+//добавить поиск по имени если имя включает хотя бы одну эту букву. +
+//после ввода каждого символа, фильтровать отображаемых пользователей.  +
+//При удалении всех символов отобразить снова весь список +
 
 "use strict";
 
 class ContactsPage {
   constructor(globalState) {
-    this.state = globalState; //стал равен this.state-у со страницы App.js
+    this.state = globalState;
 
     this.title = "Contacts";
     this.tableCaptions = ["Name", "Last name", "Email"];
   }
 
-  reRenderTable(arr) { // сделать, чтобы это был один метод рендера и лежал он в app.js
+  reRenderTable(arr) {
+    // сделать, чтобы это был один метод рендера и лежал он в app.js
     let tableBody = this.createTableBodyRow(arr);
 
     let pattern = `<tbody>
@@ -46,8 +47,9 @@ class ContactsPage {
 
     return arr
       .map(item => {
-        const [name, surname] = item.fullName.split(' ')
-        return `<tr>
+        const [name, surname] = item.fullName.split(" ");
+
+        return `<tr data-id="${item._id}">
                 <td>${name}</td>
                 <td>${surname}</td>
                 <td>${item.email}</td>
@@ -63,17 +65,57 @@ class ContactsPage {
 
   sortColumns() {
     let target = event.target;
-    console.log(target)
+
     this.tableCaptions.forEach(item => {
       if (target.textContent == item) {
-        console.log(true)
         item = this.makeCamelCase(item);
-        console.log(item)
-        let sorted = this.sortUsers(item);
-        console.log(sorted)
+
+        let index;
+
+        if (item == "name") {
+          item = "fullName";
+          index = 0;
+        }
+        if (item == "lastName") {
+          item = "fullName";
+          index = 1;
+        }
+
+        let sorted = this.sortUsers(item, index);
+        console.log(sorted);
         this.reRenderTable(sorted);
       }
     });
+  }
+
+  sortUsers(str, index) {
+    function compare(a, b) {
+      if (isNaN(a[str]) && index) {
+        if (a[str].split(" ")[index] > b[str].split(" ")[index]) {
+          return 1;
+        }
+        if (a[str].split(" ")[index] < b[str].split(" ")[index]) {
+          return -1;
+        }
+        if (a[str].split(" ")[index] == b[str].split(" ")[index]) {
+          return 0;
+        }
+      } else if (isNaN(a[str]) && !index) {
+        if (a[str] > b[str]) {
+          return 1;
+        }
+        if (a[str] < b[str]) {
+          return -1;
+        }
+        if (a[str] == b[str]) {
+          return 0;
+        }
+      } else {
+        return a[str] - b[str];
+      }
+    }
+    //console.log(this.state.people.sort(compare))
+    return this.state.people.sort(compare);
   }
 
   makeCamelCase(str) {
@@ -99,27 +141,6 @@ class ContactsPage {
     return str;
   }
 
-  sortUsers(str) {
-    console.log(str)//тут опять нужно делить фуллнейм - вынести дележ этот в отдельную ф-цию?
-    function compare(a, b) {
-      if (isNaN(a[str])) {
-        if (a[str] > b[str]) {
-          return 1;
-        }
-        if (a[str] < b[str]) {
-          return -1;
-        }
-        if (a[str] == b[str]) {
-          return 0;
-        }
-      } else {
-        return a[str] - b[str];
-      }
-    }
-    //console.log(this.state.people.sort(compare))
-    return this.state.people.sort(compare);
-  }
-
   searchUserHandler() {
     this.searchField = document.querySelector("#search");
     this.searchField.addEventListener("input", this.filterUser.bind(this));
@@ -127,9 +148,9 @@ class ContactsPage {
 
   filterUser() {
     let value = this.searchField.value.toLowerCase();
-    
+
     let filteredUsers = this.state.people.filter(item => {
-    let name = item.fullName.split(' ')[0];
+      let name = item.fullName.split(" ")[0];
 
       if (name.toLowerCase().includes(value)) {
         return item;
@@ -142,26 +163,33 @@ class ContactsPage {
     this.reRenderTable(filteredUsers);
   }
 
+  selectUserHandler() {
+    let parent = document.querySelector("tbody");
+    parent.addEventListener("click", this.selectUser.bind(this));
+  }
+
+  selectUser(e) {
+    let target = e && e.target;
+
+    if (target.tagName === "TD") {
+      let row = target.closest("tr");
+      let id = row.dataset.id;
+      this.state.people.forEach(item => {
+        if (item._id == id) {
+          this.state.selectedUser = item;
+        }
+      });
+      console.log(this.state.selectedUser);
+    }
+  }
+
   setHandlers() {
     this.sortColumnsHandler();
     this.searchUserHandler();
-/*    window.addEventListener('load', () => {
-      getPhoneUsersAPI.getAllUsers((users) => {
-        console.log('USERS from contacts', users);
-        this.people = users;
-      });// из api
-    })*/
+    this.selectUserHandler();
   }
 
   render(users) {
-/*    window.addEventListener('load', () => {
-      getPhoneUsersAPI.getAllUsers((users) => {
-        console.log('USERS from contacts', users);
-        this.people = users;
-        
-      });// из api
-    })*/
-
     return `
       <header class="header">
         <div class="container top-radius">
@@ -191,3 +219,5 @@ class ContactsPage {
       </main>`;
   }
 }
+
+export {ContactsPage};

@@ -1,19 +1,10 @@
 //edit-contact,
-//- сделать данные редактируемыми (атрибут contentEditable) // input
-//- изменять backgroundColor
+//- сделать данные редактируемыми (атрибут contentEditable) // input +
+//- изменять backgroundColor										+
 
 class EditContact {
 	constructor(globalState) {
-		this.state = globalState; //стал равен this.state-у со страницы App.js
-		this.phoneNumber = "+38 (063) 733 44 55";
-	}
-
-	renderInfo(value) {
-		return `<div class="edit-field">
-				<button href="#" class="add-btn"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
-					<input type="text" placeholder="${value}"></input>
-				</button>
-			</div>`;
+		this.state = globalState;
 	}
 
 	buttonsHandler() {
@@ -25,68 +16,195 @@ class EditContact {
 		let target = e && e.target;
 		if (!target) return;
 
-		let active =
-			e &&
-			e.target &&
-			(e.target.closest("button") ||
-				e.target.classList.contains("add-btn"));// what if another dev would change that className at button - javascript would break ?
-														//We shouldn't rely on classsNames
-		if (active == false) {
+		if (target.tagName === "INPUT") {
+			target.classList.add("active-input");
+		}
+
+		target.addEventListener("blur", () => {
+			target.classList.remove("active-input");
+		});
+	}
+
+	renderInfo(options) {
+		let { placeholder, value, name } = options;
+
+		return `<div class="edit-field">
+				<button href="#" class="add-btn">
+					<span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
+					<input type="text" placeholder="${placeholder}" value="${value}" name="${name}">
+				</button>
+			</div>`;
+	}
+
+	editUser() {
+		if (!this.state.selectedUser) {
+			return;
+		}
+		const { name, lastName, email, phone } = this.form.elements;
+
+		let fullName = `${name.value} ${lastName.value}`;
+
+		this.state.api.patchUser(
+			[fullName, email.value, phone.value],
+			this.state.selectedUser._id
+		);
+		this.state.selectedUser = null;
+	}
+
+	deleteUser() {
+		if (!this.state.selectedUser) {
 			return;
 		}
 
-		let input = active.querySelector("input");
-		input.style.backgroundColor = "lightgreen";//probably you can make it something like with CSS :focus { ...} JavaScript not really required there
+		this.state.api.deleteUser(this.state.selectedUser._id);
+		this.state.selectedUser = null;
+		this.clearFields();
+	}
 
-		input.addEventListener("blur", () => {
-			input.removeAttribute("style");
+	clearFields() {
+		let myFormElements = this.form.elements;
+
+		[...myFormElements].forEach(item => {
+			if (item.tagName === "INPUT") {
+				item.value = "";
+			}
 		});
 	}
 
 	setHandlers() {
 		this.buttonsHandler();
+
+		this.doneButton = document.querySelector(".done-btn");
+		this.deleteButton = document.querySelector(".delete-contact");
+		this.form = document.forms[0];
+		this.form.addEventListener("submit", event => {
+			event.preventDefault();
+		});
+		this.doneButton.addEventListener("click", this.editUser.bind(this));
+		this.deleteButton.addEventListener("click", this.deleteUser.bind(this));
 	}
 
 	render() {
+		let firstName = this.state.selectedUser
+			? this.state.selectedUser.fullName.split(" ")[0]
+			: "";
+		let lastName = this.state.selectedUser
+			? this.state.selectedUser.fullName.split(" ")[1]
+			: "";
+		let email = this.state.selectedUser
+			? this.state.selectedUser.email
+			: "";
+		let mobilePhone = this.state.selectedUser
+			? this.state.selectedUser.phone
+			: "";
+
 		return `<header class="header">
 			<div class="container top-radius">
 				<nav class="user-top-line">
-					<a href="user.html">Cansel</a>
+					<a href="user.html">Cancel</a>
 					<button type="submit" form="edit-contact" formaction="#" formmethod="get" class="done-btn">Done</button>
 				</nav>
 			</div>
 		</header>
 
 		<main class="main">
-			<div class="container">
-				<div class="edit-main-info">
-					<div class="edit-foto"><img src="images/user-face-mini.png" alt="#" class=" user-img img-circle center-block"></div>
-					<div class="main-info-holder">
-						${this.renderInfo("First Name")}
-						${this.renderInfo("Last Name")}
-						${this.renderInfo("Company")}
+			<form action="#" method="POST">
+				<div class="container">
+					<div class="edit-main-info">
+						<div class="edit-foto"><img src="images/user-face-mini.png" alt="#" class=" user-img img-circle center-block"></div>
+						<div class="main-info-holder">
+							${this.renderInfo({
+								placeholder:
+									this.state.selectedUser &&
+									this.state.selectedUser.fullName
+										? ""
+										: "First Name",
+								value: `${firstName}`,
+								name: "name"
+							})}
+							${this.renderInfo({
+								placeholder:
+									this.state.selectedUser &&
+									this.state.selectedUser.fullName
+										? ""
+										: "Last Name",
+								value: `${lastName}`,
+								name: "lastName"
+							})}
+							${this.renderInfo({
+								placeholder:
+									this.state.selectedUser &&
+									this.state.selectedUser.company
+										? ""
+										: "Company",
+								value: ``,
+								name: "company"
+							})}
+						</div>
+					</div>
+					<div class="scroll-holder">
+						<div class="edit-info">
+							<div class="edit-field">
+								<button href="#" class="delete-btn"><span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span>
+									<span>phone</span>
+									<input type="tel" value="${mobilePhone}" name="phone">
+								</button>
+							</div>
+							${this.renderInfo({
+								placeholder:
+									this.state.selectedUser &&
+									this.state.selectedUser.homePhone
+										? ""
+										: "add home phone",
+								value: ``,
+								name: "homePhone"
+							})}
+							${this.renderInfo({
+								placeholder:
+									this.state.selectedUser &&
+									this.state.selectedUser.email
+										? ""
+										: "add email",
+								value: `${email}`,
+								name: "email"
+							})}
+							${this.renderInfo({
+								placeholder:
+									this.state.selectedUser &&
+									this.state.selectedUser.address
+										? ""
+										: "add address",
+								value: ``,
+								name: "address"
+							})}
+							${this.renderInfo({
+								placeholder:
+									this.state.selectedUser &&
+									this.state.selectedUser.birthday
+										? ""
+										: "add birthday",
+								value: ``,
+								name: "birthday"
+							})}
+							${this.renderInfo({
+								placeholder:
+									this.state.selectedUser &&
+									this.state.selectedUser.profile
+										? ""
+										: "add social profile",
+								value: ``,
+								name: "profile"
+							})}
+							${this.renderInfo({ placeholder: "add field", value: ``, name: "add" })}
+							<div class="edit-field">
+								<button href="#" class="delete-contact">delete contact</button>
+							</div>
+						</div>
 					</div>
 				</div>
-				<div class="scroll-holder">
-					<div class="edit-info">
-						<div class="edit-field">
-							<button href="#" class="delete-btn"><span class="glyphicon glyphicon-minus-sign" aria-hidden="true"></span>
-								<span>phone</span>
-								<span>${this.phoneNumber}</span>
-							</button>
-						</div>
-						${this.renderInfo("add home phone")}
-						${this.renderInfo("add email")}
-						${this.renderInfo("add address")}
-						${this.renderInfo("add birthday")}
-						${this.renderInfo("add social profile")}
-						${this.renderInfo("add field")}
-						<div class="edit-field">
-							<button href="#" class="delete-contact">delete contact</button>
-						</div>
-					</div>
-				</div>
-			</div>
+			</form>	
 		</main>`;
 	}
 }
+
+export {EditContact};
