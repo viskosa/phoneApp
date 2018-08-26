@@ -3,6 +3,8 @@
 //после ввода каждого символа, фильтровать отображаемых пользователей.  +
 //При удалении всех символов отобразить снова весь список +
 
+//this.state.formattedPeople == array with splitted fullName property
+
 "use strict";
 
 class ContactsPage {
@@ -70,37 +72,16 @@ class ContactsPage {
       if (target.textContent == item) {
         item = this.makeCamelCase(item);
 
-        let index;
-
-        if (item == "name") {
-          item = "fullName";
-          index = 0;
-        }
-        if (item == "lastName") {
-          item = "fullName";
-          index = 1;
-        }
-
-        let sorted = this.sortUsers(item, index);
-        console.log(sorted);
+        let sorted = this.sortUsers(item);
+        //console.log(sorted);
         this.reRenderTable(sorted);
       }
     });
   }
 
-  sortUsers(str, index) {
+  sortUsers(str) {
     function compare(a, b) {
-      if (isNaN(a[str]) && index) {
-        if (a[str].split(" ")[index] > b[str].split(" ")[index]) {
-          return 1;
-        }
-        if (a[str].split(" ")[index] < b[str].split(" ")[index]) {
-          return -1;
-        }
-        if (a[str].split(" ")[index] == b[str].split(" ")[index]) {
-          return 0;
-        }
-      } else if (isNaN(a[str]) && !index) {
+      if (isNaN(a[str])) {
         if (a[str] > b[str]) {
           return 1;
         }
@@ -114,8 +95,8 @@ class ContactsPage {
         return a[str] - b[str];
       }
     }
-    //console.log(this.state.people.sort(compare))
-    return this.state.people.sort(compare);
+
+    return this.state.formattedPeople.sort(compare);
   }
 
   makeCamelCase(str) {
@@ -149,10 +130,9 @@ class ContactsPage {
   filterUser() {
     let value = this.searchField.value.toLowerCase();
 
-    let filteredUsers = this.state.people.filter(item => {
-      let name = item.fullName.split(" ")[0];
-
-      if (name.toLowerCase().includes(value)) {
+    let filteredUsers = this.state.formattedPeople.filter(item => {
+      //let name = item.fullName.split(" ")[0];
+      if (item.name.toLowerCase().includes(value)) {
         return item;
       }
 
@@ -220,4 +200,4 @@ class ContactsPage {
   }
 }
 
-export {ContactsPage};
+export { ContactsPage };

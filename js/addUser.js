@@ -1,6 +1,9 @@
+//import {Api} from './api.js';
+
 class AddUser {
 	constructor(globalState) {
 		this.state = globalState;
+		//this.api = new Api();
 	}
 
 	buttonsHandler() {
@@ -71,6 +74,7 @@ class AddUser {
 		this.buttonsHandler();
 		this.addButton = document.querySelector(".done-btn");
 		this.deleteButton = document.querySelector(".delete-contact");
+		//this.cancelButton = document.getElementById("cancel");
 		this.form = document.forms[0];
 		this.form.addEventListener("submit", event => {
 			event.preventDefault();
@@ -80,13 +84,17 @@ class AddUser {
 			"click",
 			this.clearFields.bind(this)
 		);
+		//this.cancelButton.addEventListener("click", (e) => {
+		//	e.preventDefault();
+		//	window.history.back();
+		//});
 	}
 
 	render() {
 		return `<header class="header">
 			<div class="container top-radius">
 				<nav class="user-top-line">
-					<a href="user.html">Cancel</a>
+					<a href="" id="cancel">Cancel</a>
 					<button class="done-btn">Done</button>
 				</nav>
 			</div>

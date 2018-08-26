@@ -13,7 +13,7 @@ class User {
 	}
 
 	setHandlers() {
-		console.log(this);
+
 	}
 
 	render() {

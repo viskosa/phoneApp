@@ -1,10 +1,13 @@
 //edit-contact,
 //- сделать данные редактируемыми (атрибут contentEditable) // input +
 //- изменять backgroundColor										+
+//import {Api} from './api.js';
 
 class EditContact {
 	constructor(globalState) {
 		this.state = globalState;
+		//this.api = new Api(this.state.url);
+
 	}
 
 	buttonsHandler() {
@@ -76,12 +79,17 @@ class EditContact {
 
 		this.doneButton = document.querySelector(".done-btn");
 		this.deleteButton = document.querySelector(".delete-contact");
+		//this.cancelButton = document.getElementById("cancel");
 		this.form = document.forms[0];
 		this.form.addEventListener("submit", event => {
 			event.preventDefault();
 		});
 		this.doneButton.addEventListener("click", this.editUser.bind(this));
 		this.deleteButton.addEventListener("click", this.deleteUser.bind(this));
+		//this.cancelButton.addEventListener("click", (e) => { //не срабатывают табы
+		//	e.preventDefault();
+		//	window.history.back();
+		//});
 	}
 
 	render() {
@@ -101,7 +109,7 @@ class EditContact {
 		return `<header class="header">
 			<div class="container top-radius">
 				<nav class="user-top-line">
-					<a href="user.html">Cancel</a>
+					<a href="" id="cancel">Cancel</a>
 					<button type="submit" form="edit-contact" formaction="#" formmethod="get" class="done-btn">Done</button>
 				</nav>
 			</div>

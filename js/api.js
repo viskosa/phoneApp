@@ -64,8 +64,10 @@ class Api {
   }
 
   deleteUser(id) {
-    return fetch(this.url + `/${id}`, { method: "DELETE" });
+    return fetch(this.url + `/${id}`, {
+      method: "DELETE"
+    });
   }
 }
 
-export {Api};
+export { Api };

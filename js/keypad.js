@@ -15,7 +15,7 @@
 
 //добавить функционал для удаления номера +
 //1. keypad - сделать чтобы номер можно было набрать с клавиатуры (!) +
-//2. Формат номера должен быть таким (099)-17-38-170  -
+//2. Формат номера должен быть таким (099)-17-38-170  +
 
 class KeypadPage {
   constructor(globalState) {
@@ -24,8 +24,8 @@ class KeypadPage {
   }
 
   buttonsHandler() {
-    let buttonsParent = document.querySelector("main"); // please you const keyword instead of let
-    let placeToInsertNumbers = document.querySelector(".numbers");
+    const buttonsParent = document.querySelector("main");
+    const placeToInsertNumbers = document.querySelector(".numbers");
 
     buttonsParent.addEventListener(
       "click",
@@ -48,6 +48,7 @@ class KeypadPage {
 
     if (pattern.test(code)) {
       display.innerHTML += code;
+      this.formatNumber(display.innerHTML, display);
     }
     return;
   }
@@ -58,6 +59,7 @@ class KeypadPage {
 
     if (target.classList.contains("key")) {
       display.innerHTML += target.textContent;
+      this.formatNumber(display.innerHTML, display);
     }
 
     if (target.classList.contains("glyphicon-circle-arrow-left")) {
@@ -67,6 +69,47 @@ class KeypadPage {
         display.innerHTML = numberWithoutLast;
       }
     }
+  }
+
+  formatNumber(str, display) {
+    let willBeShown = '';
+    if (str.length === 1 && str != '0') {
+      alert ('A number should be started with zero');
+    }; 
+    if (str.length === 1 && str == '0') {
+      willBeShown = str.replace(str, '(' + str);
+    };
+    if (str.length === 2 || str.length === 3) {
+      willBeShown = str;
+    };
+    if (str.length === 4) {
+      willBeShown = str.replace(str, str + ')-');
+    };
+    if (str.length === 5 || str.length === 6 || str.length === 7) {
+      willBeShown = str;
+    };
+    if (str.length === 8) {
+      willBeShown = str.replace(str, str + '-');
+    };
+    if (str.length === 9 || str.length === 10) {
+      willBeShown = str;
+    };
+    if (str.length === 11) {
+      willBeShown = str.replace(str, str + '-');
+    };
+    if (str.length === 12 || str.length === 13) {
+      willBeShown = str;
+    };
+    if (str.length === 14) {
+      willBeShown = str;
+      this.finishState = str;
+    };
+    if (str.length > 14) {
+      alert('It is enough');
+      willBeShown = this.finishState;
+    };
+
+    display.innerHTML = willBeShown;
   }
 
   setHandlers() {

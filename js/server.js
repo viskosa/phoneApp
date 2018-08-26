@@ -12,7 +12,8 @@ http
 
 		try {
 
-			let file = fs.readFileSync(`.${url}`);
+			let file = fs.readFileSync(`../${url}`);//до вебпака было `.${url}`, т.е файлы для рендера брать прям из этой же директории
+			//после сборки вебпаком основной файл теперь build/bundle.js, он лежит выше, т.е. надо ../
 			response.end(file);
 
 		} catch (err) {
